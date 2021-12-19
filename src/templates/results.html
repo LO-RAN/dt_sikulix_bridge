@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>DT Automation Bridge - Test execution results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <h1>DT Automation Bridge</h1>
+    <h3>Execution results for <strong>{{ script }}</strong></h3>
+    </br>
+    {% set logfile=script+"_OUTPUT.log" %}
+<a href="/testtool_log?filename={{ logfile }}">Execution log</a>
+    </br>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Step</th>
+                <th>Screenshot</th>
+                <th>Started at</th>
+                <th>Execution time (ms)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in details %}
+            <tr>
+                <td>{{ item['title'] }}</td>
+                <td><a href="/testtool_screenshot?script={{ script }}&image={{ item['screenshot'] }}"><img
+                            src="/testtool_screenshot?script={{ script }}&image={{ item['screenshot'] }}" alt=""
+                            width="320" height="240" /></a></td>
+                <td>{{ item['startTimestamp'] }}</td>
+                <td align="right">{{ item['responseTimeMillis'] }}</td>
+                <td>
+                    {% if item['error'] %}
+                    {% set content=item['error']['message'] %}
+                    {% else %}
+                    {% set content='OK' %}
+                    {% endif %}
+                    {{ content }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="http://sikulix.com/" target="sikulix"><img
+            src="https://raw.githubusercontent.com/RaiMan/SikuliX1/master/IDE/src/main/resources/icons/sikulix-icon.png"
+            width="64" height="64" /></a>
+</body>
+
+</html>
