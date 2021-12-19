@@ -1,0 +1,18 @@
+{
+    "version": "1.0",
+    "requests": [{
+        "description": "execute <MY_SCRIPT>.sikuli",
+        "url": "https://<DT_AUTOMATION_BRIDGE>:5000/testtool_launcher2",
+        "method": "POST",
+        "requestBody": "script=<MY_SCRIPT_ABSOLUTE_OR_RELATIVE_PATH>.sikuli&api_token=<DT_TOKEN>&api_url=https%3A%2F%2F<DT_INSTANCE>.live.dynatrace.com",
+        "configuration": {
+            "requestHeaders": [{
+                "name": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+            }],
+            "acceptAnyCertificate": true,
+            "followRedirects": true
+        },
+        "postProcessingScript": "// check response code\r\nif (response.getStatusCode() != 200) {\r\n    // if not 200, then fail\r\n    api.fail(response.getResponseBody());\r\n}"
+    }]
+}
