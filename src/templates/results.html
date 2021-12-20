@@ -27,7 +27,7 @@
                 <td><a href="/testtool_screenshot?script={{ script }}&image={{ item['screenshot'] }}"><img
                             src="/testtool_screenshot?script={{ script }}&image={{ item['screenshot'] }}" alt=""
                             width="320" height="240" /></a></td>
-                <td>{{ item['startTimestamp'] }}</td>
+                <td>{{ item['startTimestamp'].strftime("%m/%d/%Y, %H:%M:%S") }}</td>
                 <td align="right">{{ item['responseTimeMillis'] }}</td>
                 <td>
                     {% if item['error'] %}
