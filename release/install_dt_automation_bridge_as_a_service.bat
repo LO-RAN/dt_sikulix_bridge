@@ -1,7 +1,6 @@
 rem installing dt_automation_bridge as a service with NSSM ( https://nssm.cc/ )
-%~dp0nssm install dt_bridge
-%~dp0nssm set dt_bridge Application C:\dt_automation_bridge\run_bridge.bat
-%~dp0nssm set dt_bridge AppDirectory C:\dt_automation_bridge
+%~dp0nssm install dt_bridge %~dp0run_bridge.bat
+%~dp0nssm set dt_bridge AppDirectory %~dp0
 %~dp0nssm set dt_bridge DisplayName "Dynatrace automation bridge"
 %~dp0nssm set dt_bridge Start SERVICE_AUTO_START 
 %~dp0nssm set dt_bridge ObjectName LocalSystem 
