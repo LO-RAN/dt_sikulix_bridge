@@ -170,7 +170,7 @@ class ThirdPartySyntheticMonitor(DynatraceObject):
             "deleted": deleted,
             "locations": [location._raw_element for location in locations],
             "steps": [step._raw_element for step in steps] if steps else None,
-            "scheduleIntervalInSeconds": schedule_interval_in_seconds,
+            "scheduleIntervalInSeconds": max(1,schedule_interval_in_seconds),
             "noDataTimeout": no_data_timeout,
         }
         super().__init__(http_client, None, raw_element)
