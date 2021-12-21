@@ -5,84 +5,10 @@
 </head>
 <body>
 </body>
-<h1>Dynatrace SikuliX Bridge</h1>
-<h3>{{ timestamp }}</h3>
-<table border="1">
-    <thead>
-        <tr>
-            <th>URL</th>
-            <th>method</th>
-            <th>request content-type</th>
-            <th>parameters</th>
-            <th>response content-type</th>
-            <th>response status code</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>/testtool_launcher2</td>
-            <td>POST</td>
-            <td>application/x-www-form-urlencoded</td>
-            <td>script=&api_url=&api_token=[&other parameters]</td>
-            <td>text/plain</td>
-            <td>200: OK, 500: Error</td>
-        </tr>
-        <tr>
-            <td>/testtool_execution_results</td>
-            <td>GET</td>
-            <td></td>
-            <td>?filename=</td>
-            <td>text/plain</td>
-            <td>200: OK, 400: Error</td>
-        </tr>
-    </tbody>
-</table>
-</br>
-<table border="1">
-    <thead>
-        <tr>
-            <th>URL</th>
-            <th>method</th>
-            <th>request content-type</th>
-            <th>parameters</th>
-            <th>response content-type</th>
-            <th>response status code</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>/testtool_launcher</td>
-            <td>POST</td>
-            <td>application/json</td>
-            <td>{script_name: , function_to_execute: }</td>
-            <td>text/plain</td>
-            <td>200: OK, 500: Error</td>
-        </tr>
-        <tr>
-            <td>/testtool_properties</td>
-            <td>GET</td>
-            <td></td>
-            <td>?filename=</td>
-            <td>application/json</td>
-            <td>200: OK, 400: Error</td>
-        </tr>
-        <tr>
-            <td>/testtool_screenshot</td>
-            <td>GET</td>
-            <td></td>
-            <td>?script=&image=</td>
-            <td>image/png</td>
-            <td>200: OK, 400: Error</td>
-        </tr>
-        <tr>
-            <td>/testtool_log</td>
-            <td>GET</td>
-            <td></td>
-            <td>?filename=</td>
-            <td>text/plain</td>
-            <td>200: OK, 400: Error</td>
-        </tr>
-    </tbody>
-</table>
-
+<h1>DT Automation Bridge</h1>
+<h3>{{ timestamp.strftime("%m/%d/%Y, %H:%M:%S") }} - Home</h3>
+<a href="/testtool_scripts">Deployed scripts</a><br/>
+<a href="/testtool_API">API usage</a>
+<hr>
+<a href="https://github.com/LO-RAN/dt_sikulix_bridge" target="github">The project on GitHub</a>
 </html>
