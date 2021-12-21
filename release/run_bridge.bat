@@ -14,7 +14,10 @@ rem  set CMD="AutoIt3.exe {} {}"
 rem where to generate timings and screenshots upon script execution
 set DT_BRIDGE_OUTPUT=c:\tmp
 
+rem where to look for scripts to execute
+set DT_BRIDGE_SCRIPTS=%~dp0scripts
+
 echo launching bridge 
 rem first parameter is the command to execute (defaults to SikuliX...)
 rem second prameter is the listening port (defaults to 5000)
-call dt_automation_bridge.exe %CMD% 5000
+call %~dp0dt_automation_bridge.exe %CMD% 5000
