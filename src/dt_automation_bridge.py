@@ -7,6 +7,7 @@ import subprocess
 from datetime import datetime
 from threading import Thread
 from flask import render_template
+from flask_basicauth import BasicAuth
 from dt_third_party_synthetic import get_client, process_third_party_results, test_api_validity
 from werkzeug.utils import secure_filename
 
@@ -19,6 +20,12 @@ if getattr(sys, 'frozen', False):
     app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
 else:
     app = Flask(__name__)
+
+app.config['BASIC_AUTH_USERNAME'] = 'admin'
+app.config['BASIC_AUTH_PASSWORD'] = 'dynatrace'
+
+basic_auth = BasicAuth(app)
+
 
 # ---------------- Flask URLs ----------------
 
@@ -36,6 +43,7 @@ def testtool_API():
 
 # upload a new compiled jar SikuliX script
 @app.route('/testtool_upload_script', methods=['POST'])
+@basic_auth.required
 def testtool_upload_script():
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -55,6 +63,7 @@ def testtool_upload_script():
 
 # delete a deployed compiled jar SikuliX script
 @app.route('/testtool_delete_script', methods=['GET'])
+@basic_auth.required
 def testtool_delete_script():
     filename = request.args.get('filename')
     if filename == None:
