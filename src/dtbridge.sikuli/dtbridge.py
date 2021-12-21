@@ -25,8 +25,6 @@ def dt_get_timings(func):
         global step_id
         Settings.UserLogPrefix = "dtbridge"
         Settings.UserLogTime = True        
-
-        the_path=os.getenv('DT_BRIDGE_OUTPUT')
         
         Debug.user(func.__name__)
         
