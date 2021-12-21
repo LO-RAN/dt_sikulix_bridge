@@ -1,16 +1,37 @@
 <html>
+
 <head>
     <title>DT Automation Bridge - Test execution results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
+
 <body>
-    <h1>DT Automation Bridge</h1>
+    <a href="/">🏠</a> <a href="/testtool_scripts">&lt;&lt;</a> <h1>DT Automation Bridge</h1>
     <h3>Execution results for <strong>{{ script }}</strong></h3>
     </br>
     {% set logfile=script+"_OUTPUT.log" %}
-<a href="/testtool_log?filename={{ logfile }}">Execution log</a>
-    </br>
-    <table border="1">
+    <button type="button" class="collapsible">Execution log</button>
+    <div class="content">
+        <iframe src="/testtool_log?filename={{ logfile }}" height="200" width="100%" title="Log"></iframe>
+    </div>
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+    <table>
         <thead>
             <tr>
                 <th>Step</th>
@@ -26,7 +47,7 @@
                 <td>{{ item['title'] }}</td>
                 <td><a href="/testtool_screenshot?script={{ script }}&image={{ item['screenshot'] }}"><img
                             src="/testtool_screenshot?script={{ script }}&image={{ item['screenshot'] }}" alt=""
-                            width="320" height="240" /></a></td>
+                            width="320"/></a></td>
                 <td>{{ item['startTimestamp'].strftime("%m/%d/%Y, %H:%M:%S") }}</td>
                 <td align="right">{{ item['responseTimeMillis'] }}</td>
                 <td>
