@@ -10,21 +10,26 @@ import com.tigervnc.rfb.CMsgWriterV3
 import com.tigervnc.rfb.Keysyms as Keysyms
 import org.sikuli.vnc.VNCScreen as VNCScreen
 import com.tigervnc.vncviewer.UserPreferences as Pref
+
 vs=None
 step_id=0
 
+#-----------------------------------------------------------------------------------------
 # decorator to retrieve function execution timings and error context (log & screenshot)
 # this script is intended to be used from a SikuliX python script
 # by importing the "get_timings" decorator function like so :
 #    from dtbridge import get_timings
 # and decorating the functions to monitor like so :
-#    @get_timings
+#    @dt_get_timings
 #    def my_fonction(param1, ..., param n):
 def dt_get_timings(func):
     def wrapper(*args, **kwargs):
         global step_id
+        global vs
         Settings.UserLogPrefix = "dtbridge"
         Settings.UserLogTime = True        
+        # disable default actions logging (too verbose and potentially contains sensitive data)
+        Settings.ActionLogs = False
         
         Debug.user(func.__name__)
         
@@ -46,7 +51,8 @@ def dt_get_timings(func):
             te = time.time()
 
             # take screenshot after step completion
-            if vs is not None:    
+                        
+            if vs:
                 image = vs.capture(SCREEN).save()
             else:
                 image = capture(SCREEN)
@@ -82,6 +88,7 @@ def dt_get_timings(func):
     return wrapper
 
 
+#-----------------------------------------------------------------------------------------
 # convert command line arguments to a dict with key-value pairs
 def dt_get_args(arguments):
     args= {}
@@ -93,10 +100,11 @@ def dt_get_args(arguments):
             val = arg
         args[key] = val
 
-        print(str(args))
+        #print(str(args))
     return args
 
 
+#-----------------------------------------------------------------------------------------
 def output_path(file):
     script=os.path.realpath(sys.argv[0])
     the_path=os.getenv('DT_BRIDGE_OUTPUT')
@@ -114,23 +122,37 @@ def output_path(file):
     return os.path.join(the_path,script_name+"_"+file)
 
 
+#-----------------------------------------------------------------------------------------
 # open VNC connection
 def dt_vnc_connect(host, port=5900, pwd='dynatrace'):
     global vs
     vs = VNCScreen.start(host, port, pwd, 10, 1000)
-    
+
     if not vs:    
        print("Error connecting to VNC")
        exit(-1)
-
-
+    
     Pref.set("global", "AcceptClipboard", True)
     Pref.set("global", "SendClipboard", True)
-    
+
     return vs
 
+
+#-----------------------------------------------------------------------------------------
+# close VNC connection
+def dt_vnc_disconnect():
+    global vs
+    # Stop the referenced VNC session, which closes the underlying socket connection  
+    if vs:    
+        vs.stop()
+        vs=None
+    else:
+        print("No VNC Screen to interact with")
+
+#-----------------------------------------------------------------------------------------
 # send CTRL+ALT+DEL over the VNC connection
-def dt_vnc_send_ctrl_alt_del(vs):
+def dt_vnc_send_ctrl_alt_del():
+    global vs
     if vs:    
         cc = vs.getClient().writer()
         cc.writeKeyEvent(Keysyms.Control_L, True)
@@ -142,4 +164,3 @@ def dt_vnc_send_ctrl_alt_del(vs):
     else:
         print("No VNC Screen to interact with")
 
- 

@@ -21,6 +21,7 @@ if getattr(sys, 'frozen', False):
 else:
     app = Flask(__name__)
 
+# credentials protecting the scripts upload/delete features
 app.config['BASIC_AUTH_USERNAME'] = 'admin'
 app.config['BASIC_AUTH_PASSWORD'] = 'dynatrace'
 
@@ -198,7 +199,7 @@ def testtool_launcher2():
         return str(e), 500
 
 
-    printlog("Running command : "+cmd_exe)
+    #printlog("Running command : "+cmd_exe)
 
     # execute script in a separate thread to be able to respond quickly with an aknowledgment
     Thread(target = run_cmd2, args=(cmd_exe, dt_client, script, request.url_root)).start()
