@@ -53,7 +53,7 @@ cd ..
 ### Build the bridge executable 
 ```
 cd src
-pyinstaller -F --add-data "templates;templates" --add-data "static;static"  --distpath ../release/ dt_automation_bridge.py
+pyinstaller -F --add-data "templates:templates" --add-data "static:static"  --distpath ../release/ dt_automation_bridge.py
 cp $PWD/dtbridge_sikuli.jar ../release/
 wget -O ../release/sikulixide-2.0.5.jar https://launchpad.net/sikuli/sikulix/2.0.5/+download/sikulixide-2.0.5.jar
 cd ..
