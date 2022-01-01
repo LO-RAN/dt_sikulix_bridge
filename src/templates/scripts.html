@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>DT Automation Bridge - List of deployed scripts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script>
+        function confirm_deletion(file) {
+          let text;
+          if (confirm("WARNING: This will remove the "+file+" script and all attached results. Do you confirm ?") == true) {
+            window.location='/testtool_delete_script?filename='+file;
+          }
+          document.getElementById("demo").innerHTML = text;
+        }
+        </script>
+        
+</head>
+<body>
+    <a href="/">🏠</a> <h1>DT Automation Bridge</h1>
+    <h3>{{ timestamp.strftime("%m/%d/%Y, %H:%M:%S") }} - List of deployed scripts</h3>
+    </br>
+    <form method=post enctype=multipart/form-data action="/testtool_upload_script">
+        <label for="fname">Add new script:</label>
+        <input type=file name=file>
+        <input type=submit value="Upload">
+        <span class='error'>{{ error_msg }}</span>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Sript name</th>
+                <th>last execution results</th>
+                <th>action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name in details %}
+            <tr>
+                <td>{{ name }}</td>
+                <td><a href="/testtool_execution_results?filename={{ name }}">last results</a></td>
+                <td><button onclick="confirm_deletion('{{ name }}')">delete</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="http://sikulix.com/" target="sikulix"><img
+            src="https://raw.githubusercontent.com/RaiMan/SikuliX1/master/IDE/src/main/resources/icons/sikulix-icon.png"
+            width="64" height="64" /></a>
+</body>
+
+</html>
