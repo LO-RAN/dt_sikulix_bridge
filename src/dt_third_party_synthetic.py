@@ -1,6 +1,8 @@
 # use an override of the original Dynatrace API wrapper to let me create a test with no result (only alarms)
 from dynatrace_local_override import Dynatrace
 from dynatrace.environment_v1.synthetic_third_party import SYNTHETIC_EVENT_TYPE_OUTAGE
+from dynatrace.environment_v1.synthetic_third_party import SYNTHETIC_EVENT_TYPE_SLOWDOWN
+
 
 from datetime import datetime
 from typing import Optional
@@ -125,7 +127,7 @@ def process_third_party_results(
                     location_id=socket.gethostname(),
                     timestamp=step['startTimestamp'],
                     state="open",
-                    event_type=SYNTHETIC_EVENT_TYPE_OUTAGE,
+                    event_type=SYNTHETIC_EVENT_TYPE_SLOWDOWN,
                     reason=step['error']['message'],
                     engine_name=engine,
                 )
@@ -133,7 +135,7 @@ def process_third_party_results(
                 break
 
     if(scenario_status == True):
-        # send event to close last open problem (if any)
+        # send events to close last open problem (if any)
         dt_client.third_part_synthetic_tests.report_simple_thirdparty_synthetic_test_event(
             test_id=the_test_id,
             name="",
@@ -141,6 +143,16 @@ def process_third_party_results(
             timestamp=datetime.now(),
             state="resolved",
             event_type=SYNTHETIC_EVENT_TYPE_OUTAGE,
+            reason="",
+            engine_name=engine,
+        )
+        dt_client.third_part_synthetic_tests.report_simple_thirdparty_synthetic_test_event(
+            test_id=the_test_id,
+            name="",
+            location_id="",
+            timestamp=datetime.now(),
+            state="resolved",
+            event_type=SYNTHETIC_EVENT_TYPE_SLOWDOWN,
             reason="",
             engine_name=engine,
         )
