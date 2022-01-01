@@ -322,6 +322,10 @@ def run_cmd2(cmd, dt_client: Dynatrace, script, url):
     else:
         last_time=os.path.getmtime(result_file)
         frequency=int(datetime.timestamp(datetime.now()) - last_time)
+    # in case the test execution did not trigger for a long time (maybe because of a maintenance window), 
+    # we may end up with a very big interval.
+    # We must make sure the value does not exceed the max accepted by Dynatrace API
+    frequency=min(frequency, 86400)
 
     # (re)create file to store timings
     f = open(result_file, "w")
