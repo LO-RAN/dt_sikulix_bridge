@@ -338,7 +338,7 @@ def run_cmd2(cmd, dt_client: Dynatrace, script, url):
     result = subprocess.run(
         cmd, 
         stdout=subprocess.PIPE,
-        shell=False, 
+        shell=True, 
         stderr=subprocess.PIPE,
         env=os.environ
         )
