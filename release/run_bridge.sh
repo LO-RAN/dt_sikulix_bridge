@@ -8,7 +8,7 @@ export JAVA_HOME=/opt/dynatrace/gateway/jre
 # note: first placeholder is the script name
 #       second placeholder is the function to execute
 
-export CMD="$JAVA_HOME/bin/java -jar $PWD/sikulixide-2.0.5.jar -r {} --args '{}'"
+export CMD="\"$JAVA_HOME/bin/java\" -jar \"$PWD/sikulixide-2.0.5.jar\" -r {} --args \"{}\""
 
 # where to generate timings and screenshots upon script execution
 export DT_BRIDGE_OUTPUT=/tmp
@@ -19,4 +19,4 @@ export DT_BRIDGE_SCRIPTS=$PWD/scripts
 echo launching bridge
 # first parameter is the command to execute (defaults to SikuliX...)
 # second prameter is the listening port (defaults to 5000)
-$PWD/dt_automation_bridge $CMD 5000
+$PWD/dt_automation_bridge "$CMD" 5000
