@@ -70,8 +70,9 @@ if __name__ == '__main__':
    vs=dt_vnc_connect("<REPLACE WITH YOUR ACTUAL VNC SERVER>", <PORT>, "<PASSWORD>")  
    # make it the default screen for the following commands
    use(vs)                  
+   
+   open_session()
    try:         
-       open_session()
        open_calc()
        calc1()   
        if 'param1' in args:
@@ -79,8 +80,8 @@ if __name__ == '__main__':
        else:
            calc2("6/5")
        close_calc()
-       close_session()
    finally:    
+       close_session()
        dt_vnc_disconnect()
        # revert to default local screen
        use()
