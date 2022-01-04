@@ -27,14 +27,16 @@
         <thead>
             <tr>
                 <th>Sript name</th>
+                <th>Last modified</th>
                 <th>last execution results</th>
                 <th>action</th>
             </tr>
         </thead>
         <tbody>
-            {% for name in details %}
+            {% for detail in details %}
             <tr>
-                <td>{{ name }}</td>
+                <td>{{ detail["name"] }}</td>
+                <td>{{ detail["mdate"] }}</td>
                 <td><a href="/testtool_execution_results?filename={{ name }}">last results</a></td>
                 <td><button onclick="confirm_deletion('{{ name }}')">delete</button></td>
             </tr>

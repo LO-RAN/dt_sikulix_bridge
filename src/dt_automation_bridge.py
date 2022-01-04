@@ -253,7 +253,11 @@ def testtool_scripts():
     details=[]
 
     for filename in os.listdir(scripts_path()):
-        details.append(filename)
+        detail={}
+        detail["name"]=filename
+        detail["mdate"]=datetime.fromtimestamp(os.path.getmtime(filename))
+        details.append(detail)
+        
 
     return render_template("scripts.html", error_msg=error_msg, details=details, timestamp=datetime.now())
     
