@@ -255,7 +255,7 @@ def testtool_scripts():
     for filename in os.listdir(scripts_path()):
         detail={}
         detail["name"]=filename
-        detail["mdate"]=datetime.fromtimestamp(os.path.getmtime(filename))
+        detail["mdate"]=datetime.fromtimestamp(os.path.getmtime(os.path.join(scripts_path(), filename)))
         details.append(detail)
         
 
