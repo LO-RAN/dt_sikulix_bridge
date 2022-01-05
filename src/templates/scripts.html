@@ -37,8 +37,8 @@
             <tr>
                 <td>{{ detail["name"] }}</td>
                 <td>{{ detail["mdate"] }}</td>
-                <td><a href="/testtool_execution_results?filename={{ name }}">last results</a></td>
-                <td><button onclick="confirm_deletion('{{ name }}')">delete</button></td>
+                <td><a href="/testtool_execution_results?filename={{ detail['name'] }}">last results</a></td>
+                <td><button onclick="confirm_deletion('{{ detail["name"] }}')">delete</button></td>
             </tr>
             {% endfor %}
         </tbody>
