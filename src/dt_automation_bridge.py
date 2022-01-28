@@ -5,7 +5,7 @@ from flask import Flask, request, abort, send_file, redirect, url_for
 import json
 import subprocess
 from datetime import datetime
-from threading import Thread
+from threading import Thread, Lock
 from flask import render_template
 from flask_basicauth import BasicAuth
 from dt_third_party_synthetic import get_client, process_third_party_results, test_api_validity
@@ -27,6 +27,8 @@ app.config['BASIC_AUTH_PASSWORD'] = 'dynatrace'
 
 basic_auth = BasicAuth(app)
 
+# used for making sure we chain background threads (and NOT run them in //)
+mutex = Lock()
 
 # ---------------- Flask URLs ----------------
 
@@ -316,67 +318,74 @@ def run_cmd(cmd, shell=""):
         return 0,"OK"
 
 def run_cmd2(cmd, dt_client: Dynatrace, script, url):
+    global mutex
+    # make sure no other thread is running, otherwise wait
+    # get exclusive token
+    mutex.acquire()    
     
-    result_file=output_file(script, "timings.txt")
-    # try to figure out the frequency of execution
-    # did we had previous results
-    if not os.path.isfile(result_file):
-        # no clue, let's guess it's 15 mn
-        frequency=900
-    else:
-        last_time=os.path.getmtime(result_file)
-        frequency=int(datetime.timestamp(datetime.now()) - last_time)
-    # in case the test execution did not trigger for a long time (maybe because of a maintenance window), 
-    # we may end up with a very big interval.
-    # We must make sure the value does not exceed the max accepted by Dynatrace API
-    frequency=min(frequency, 86400)
+    try:
+        result_file=output_file(script, "timings.txt")
+        # try to figure out the frequency of execution
+        # did we had previous results
+        if not os.path.isfile(result_file):
+            # no clue, let's guess it's 15 mn
+            frequency=900
+        else:
+            last_time=os.path.getmtime(result_file)
+            frequency=int(datetime.timestamp(datetime.now()) - last_time)
+        # in case the test execution did not trigger for a long time (maybe because of a maintenance window), 
+        # we may end up with a very big interval.
+        # We must make sure the value does not exceed the max accepted by Dynatrace API
+        frequency=min(frequency, 86400)
 
-    # (re)create file to store timings
-    f = open(result_file, "w")
-    f.write("")
-    f.close()
-    
-    
-    log="OK"
+        # (re)create file to store timings
+        f = open(result_file, "w")
+        f.write("")
+        f.close()
+        
+        
+        log="OK"
 
-    result = subprocess.run(
-        cmd, 
-        stdout=subprocess.PIPE,
-        shell=True, 
-        stderr=subprocess.PIPE,
-        env=os.environ
-        )
+        result = subprocess.run(
+            cmd, 
+            stdout=subprocess.PIPE,
+            shell=True, 
+            stderr=subprocess.PIPE,
+            env=os.environ
+            )
 
-    is_error=False
-    if result.stderr:
-        log=result.stderr.decode('utf-8')
-        is_error=True
-    if result.stdout:
-        log=result.stdout.decode('utf-8')
-
-        # remove specific errors we want to ignore :
-        # this one because we start the bridge as a service and it has no access to local mouse, keyboard and screen.
-        # But we don't mind because it will only interact with remote desktop through VNC connection.
-        log_pattern="[error] Mouse: not useable (blocked)"
-        if log_pattern in log:
-            log=log.replace(log_pattern,"")
-        # remaining error ?
-
-        if '[error]' in log:
+        is_error=False
+        if result.stderr:
+            log=result.stderr.decode('utf-8')
             is_error=True
+        if result.stdout:
+            log=result.stdout.decode('utf-8')
+
+            # remove specific errors we want to ignore :
+            # this one because we start the bridge as a service and it has no access to local mouse, keyboard and screen.
+            # But we don't mind because it will only interact with remote desktop through VNC connection.
+            log_pattern="[error] Mouse: not useable (blocked)"
+            if log_pattern in log:
+                log=log.replace(log_pattern,"")
+            # remaining error ?
+
+            if '[error]' in log:
+                is_error=True
 
 
-    # save log on file
-    log_file=output_file(script, "OUTPUT.log")
-    f = open(log_file, "w")
-    f.write(log)
-    f.close()
+        # save log on file
+        log_file=output_file(script, "OUTPUT.log")
+        f = open(log_file, "w")
+        f.write(log)
+        f.close()
 
-    results_url=url+"testtool_execution_results?filename="+script
+        results_url=url+"testtool_execution_results?filename="+script
 
-    # send results to Dynatrace with Synthetic third party API 
-    process_third_party_results(script, result_file, log, results_url, dt_client, is_error, frequency)
-
+        # send results to Dynatrace with Synthetic third party API 
+        process_third_party_results(script, result_file, log, results_url, dt_client, is_error, frequency)
+    finally:
+        # release token when processing done
+        mutex.release()
 
 def output_path():
     the_path=os.getenv('DT_BRIDGE_OUTPUT')
