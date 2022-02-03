@@ -7,7 +7,7 @@ rem default is to use SikuliX if no parameter is provided on the command line
 rem note: first placeholder is the script name
 rem       second placeholder is the function to execute
 
-set CMD="\"%JAVA_HOME%\bin\java\" -jar \"%~dp0sikulixide-2.0.5.jar\" -r {} --args \"{}\""
+set CMD="\"%JAVA_HOME%\bin\java\" -jar \"%~dp0sikulixide-2.0.5.jar\" -r {} --args {}"
 rem  but can be used also with other tools, like AutoIt : 
 rem  set CMD="AutoIt3.exe {} {}"
 
