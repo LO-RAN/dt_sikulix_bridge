@@ -1,6 +1,7 @@
 import sys
 import os
 import fnmatch
+import ssl
 from flask import Flask, request, abort, send_file, redirect, url_for
 import json
 import subprocess
@@ -142,7 +143,6 @@ def testtool_launcher():
 def testtool_launcher2():
     global cmd
 
-    
     printlog("testtool_launcher2")
     sys.stdout.flush()
 
@@ -188,7 +188,7 @@ def testtool_launcher2():
     
     # process remaining parameters to provide them to the executed script 
     for p in params:
-        script_args+=p+'='+params[p]+" "        
+        script_args+=p+'="'+params[p]+'" '        
 
     cmd_exe=cmd.format(os.path.join(scripts_path(), script), script_args)
 
@@ -309,15 +309,15 @@ def run_cmd(cmd, shell=""):
     result = subprocess.run(cmd, stdout=subprocess.PIPE,
                             shell=False, stderr=subprocess.PIPE)
     if result.stderr:
-        printlog('stderr:'+result.stderr.decode('utf-8'))
-        return -1, result.stderr.decode('utf-8')
+        printlog('stderr:'+result.stderr.decode('unicode_escape'))
+        return -1, result.stderr.decode('unicode_escape')
     if result.stdout:
-        printlog("Command Result: {}".format(result.stdout.decode('utf-8')))
-        return 0, result.stdout.decode('utf-8')
+        printlog("Command Result: {}".format(result.stdout.decode('unicode_escape')))
+        return 0, result.stdout.decode('unicode_escape')
     else:
         return 0,"OK"
 
-def run_cmd2(cmd, dt_client: Dynatrace, script, url):
+def run_cmd2(cmd: str, dt_client: Dynatrace, script: str, url: str):
     global mutex
     # make sure no other thread is running, otherwise wait
     # get exclusive token
@@ -343,7 +343,6 @@ def run_cmd2(cmd, dt_client: Dynatrace, script, url):
         f.write("")
         f.close()
         
-        
         log="OK"
 
         result = subprocess.run(
@@ -356,10 +355,10 @@ def run_cmd2(cmd, dt_client: Dynatrace, script, url):
 
         is_error=False
         if result.stderr:
-            log=result.stderr.decode('utf-8')
+            log=result.stderr.decode('unicode_escape')
             is_error=True
         if result.stdout:
-            log=result.stdout.decode('utf-8')
+            log=result.stdout.decode('unicode_escape')
 
             # remove specific errors we want to ignore :
             # this one because we start the bridge as a service and it has no access to local mouse, keyboard and screen.
@@ -375,7 +374,7 @@ def run_cmd2(cmd, dt_client: Dynatrace, script, url):
 
         # save log on file
         log_file=output_file(script, "OUTPUT.log")
-        f = open(log_file, "w")
+        f = open(log_file, "w", encoding="utf-8")
         f.write(log)
         f.close()
 
@@ -441,4 +440,9 @@ if __name__ == '__main__':
             
     printlog("using command line : "+cmd)
     #app.run(host='0.0.0.0', port=5000)
-    app.run(host='0.0.0.0', port=thePort,ssl_context='adhoc')
+    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+    # specifying where to find SSL certificate and private key
+    # those provided by default have been generated with Openssl:
+    # example:   openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+    context.load_cert_chain('cert.pem', 'key.pem')
+    app.run(host='0.0.0.0', port=thePort,ssl_context=context)
