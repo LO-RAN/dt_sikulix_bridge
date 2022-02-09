@@ -1,6 +1,9 @@
 # dt_sikulix_bridge
 a bridge between Dynatrace Synthetic and SikuliX GUI tests
 
+## Disclaimer
+THIS IS NOT PART OF THE DYNATRACE PRODUCT. This was meant to be a demonstration app, but proved to have some actual utility. It is, however, provided without any representations, warranties, or formal support whatsoever.
+
 ## on Windows
 ### retrieve project from Github
 ```
