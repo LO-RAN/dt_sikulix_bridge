@@ -92,6 +92,7 @@ def dt_get_timings(func):
 # convert command line arguments to a dict with key-value pairs
 def dt_get_args(arguments):
     args= {}
+    
     for arg in arguments:
         if "=" in arg:
             key, val = arg.split('=')
@@ -100,7 +101,6 @@ def dt_get_args(arguments):
             val = arg
         args[key] = val
 
-        #print(str(args))
     return args
 
 

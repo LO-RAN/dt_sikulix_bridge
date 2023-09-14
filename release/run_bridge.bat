@@ -12,7 +12,7 @@ rem  but can be used also with other tools, like AutoIt :
 rem  set CMD="AutoIt3.exe {} {}"
 
 rem where to generate timings and screenshots upon script execution
-set DT_BRIDGE_OUTPUT=c:\tmp
+set DT_BRIDGE_OUTPUT=c:\tmp\sikulix
 
 rem where to look for scripts to execute
 set DT_BRIDGE_SCRIPTS=%~dp0scripts
