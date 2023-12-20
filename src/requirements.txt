@@ -5,7 +5,6 @@ charset-normalizer==2.0.9
 click==8.0.3
 colorama==0.4.4
 cryptography==36.0.1
-dataclasses==0.8
 dt==1.1.46
 Flask==2.0.2
 Flask-BasicAuth==0.2.0
